@@ -1,5 +1,3 @@
-import time
-
 import streamlit as st
 
 # Removes top bar and deploy button
@@ -237,11 +235,8 @@ for q in questions:
 
 def on_answer(index, weight):
     st.session_state.answers.append(index)
-    # Increment q_index normally
     st.session_state.q_index += 1
     st.session_state.score += (index / 3) * weight
-    # Optional: Set a flag to ensure the typing routine runs
-    st.session_state.typing_needed = True
 
 
 def reset():
@@ -362,85 +357,10 @@ elif st.session_state.q_index < len(questions):
         unsafe_allow_html=True,
     )
 
-    # --- REPLACEMENT CODE SNIPPET START ---
-    current_question = questions[st.session_state.q_index]["str"]
-    q_length = (
-        len(current_question) * 0.08
-    )  # Determine duration based on text length (0.08s per character)
-    cursor_duration = (
-        q_length + 0.5
-    )  # Total duration for the cursor to blink after typing finishes
-
-    # --- REPLACEMENT CODE SNIPPET START (Multi-line and Restart Fix) ---
-    current_question = questions[st.session_state.q_index]["str"]
-    q_length = len(current_question) * 0.04  # Faster typing speed (0.04s per char)
-    cursor_duration = q_length + 0.5
-    element_key = (
-        st.session_state.q_index
-    )  # Use question index as unique key to force restart
-
-    # Place this function definition near your on_answer and reset functions
-    def type_text(text, speed=0.04):
-        """Animates text using a typewriter effect."""
-        # Create an empty container where the text will be displayed
-        placeholder = st.empty()
-        full_text = ""
-
-        # Define the base style for the text
-        style = f"font-family: 'Courier New', monospace; font-size: 28px; font-weight: bold; color: #00f5ff; text-align: center; text-shadow: 0 0 5px #00f5ff, 0 0 10px #00f5ff;"
-
-        # Loop through each character
-        for char in text:
-            full_text += char
-            # Use HTML to display the current text with the style
-            # We append a blinking cursor effect via CSS for realism
-            html = f"<h2 style='{style}'>{full_text}<span class='blinking-cursor'>|</span></h2>"
-            placeholder.markdown(html, unsafe_allow_html=True)
-            time.sleep(speed)
-
-        # Display final text without the blinking cursor
-        placeholder.markdown(
-            f"<h2 style='{style}'>{full_text}</h2>", unsafe_allow_html=True
-        )
-
-    # --- NOW, REPLACE THE QUESTION DISPLAY LOGIC ---
-    # This goes inside: elif st.session_state.q_index < len(questions):
-    # right after the progress bar code.
-
-    if st.session_state.q_index < len(questions):
-        # ... (Your Progress Bar Code goes here) ...
-
-        # --- TYPEWRITER LOGIC START ---
-
-        # 1. Inject CSS for the Blinking Cursor
-        st.markdown(
-            """
-        <style>
-        @keyframes blink-cursor {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-        .blinking-cursor {
-            font-weight: normal;
-            margin-left: 2px;
-            animation: blink-cursor 0.75s step-end infinite;
-            color: #ff0099; /* Pink cursor color */
-        }
-        </style>
-        """,
-            unsafe_allow_html=True,
-        )
-
-        # 2. Run the typing animation function
-        current_question_text = questions[st.session_state.q_index]["str"]
-        type_text(current_question_text)  # Calls the function defined above
-
-        st.markdown("<div style='height:120px;'></div>", unsafe_allow_html=True)
-        # ... (Your Button Logic continues here) ...
-
-    # --- REPLACEMENT CODE SNIPPET END ---
-
-    # --- REPLACEMENT CODE SNIPPET END ---
+    st.markdown(
+        f"<h2 style='text-align:center; color:#00f5ff; font:ComicSans font-weight:bold;'>{questions[st.session_state.q_index]['str']}</h2>",
+        unsafe_allow_html=True,
+    )
     st.markdown("<div style='height:120px;'></div>", unsafe_allow_html=True)
     st.markdown(
         """
